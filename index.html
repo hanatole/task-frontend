@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        font-family: "Inter", sans-serif;
+      }
+
+      body,
+      html {
+        scroll-behavior: smooth !important;
+      }
+
+      .pts {
+        font-family: "PT Serif", serif;
+      }
+
+      .bg-gradiant {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0), #fff),
+          url("data:image/svg+xml,%3Csvg width='12' height='24' viewBox='0 0 12 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6d6d6' fill-opacity='0.62'%3E%3Cpath d='M2 0h2v12H2V0zm1 20c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM9 8c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-1 4h2v12H8V12z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body
+    class="antialiased"
+    x-data="taskApp"
+    x-cloak
+    @keydown.escape.window="modalOpened = false; disapproveAction()"
+  >
+    <!-- Header -->
+    <header class="shadow-sm">
+      <div
+        class="mx-auto max-w-5xl px-6 py-3 flex flex-col md:flex-row gap-2 md:gap-8 items-center"
+      >
+        <a href="/" class="font-bold text-xl">
+          <span class="text-black-500">
+            <i class="bi bi-bookmark-fill"></i> Task
+          </span>
+        </a>
+        <div class="flex ml-0 md:ml-auto gap-2 md:gap-8 items-center">
+          <button
+            class="px-3 py-1 bg-black text-white rounded cursor-pointer transition-all duration-150 ease-in-out hover:scale-105 hover:bg-gray-900 active:scale-95"
+            @click="toggleModal()"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- List of tasks -->
+    <main class="mx-auto max-w-5xl px-6 py-1">
+      <section>
+        <div class="px-2 py-5 mx-auto max-w-7xl">
+          <h1 class="text-2xl font-semibold text-center my-1">List of tasks</h1>
+          <div class="flex flex-col">
+            <div class="overflow-x-auto">
+              <div class="inline-block min-w-full">
+                <div class="overflow-hidden">
+                  <table class="min-w-full divide-y divide-neutral-200">
+                    <thead>
+                      <tr class="text-neutral-500">
+                        <th
+                          class="px-5 py-3 text-xs font-medium text-left uppercase"
+                        >
+                          Due date
+                        </th>
+                        <th
+                          class="px-5 py-3 text-xs font-medium text-left uppercase"
+                        >
+                          Title
+                        </th>
+                        <th
+                          class="px-5 py-3 text-xs font-medium text-left uppercase"
+                        >
+                          Status
+                        </th>
+                        <th
+                          class="px-5 py-3 text-xs font-medium text-right uppercase"
+                        >
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-200">
+                      <template x-for="task in tasks" :key="task.id">
+                        <tr class="text-neutral-800">
+                          <td
+                            class="px-5 py-3 text-sm font-medium whitespace-nowrap"
+                            x-text="task.dueDate"
+                          ></td>
+                          <td
+                            class="px-5 py-3 text-sm whitespace-nowrap"
+                            x-text="task.title"
+                          ></td>
+                          <td
+                            class="px-5 py-3 text-sm whitespace-nowrap"
+                            x-text="task.status"
+                          ></td>
+                          <td
+                            class="px-5 py-3 text-sm font-medium text-right whitespace-nowrap"
+                          >
+                            <span
+                              class="flex gap-2 items-center justify-end font-semibold cursor-pointer"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                class="text-blue-500"
+                                viewBox="0 0 16 16"
+                                @click="showTask(task.id)"
+                              >
+                                <path
+                                  d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8Z"
+                                />
+                                <path
+                                  d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
+                                />
+                              </svg>
+                              <span
+                                class="text-green-500"
+                                @click="targetedTask = { id: task.id, action: 'Complete' }"
+                                title="Complete"
+                              >
+                                ✔
+                              </span>
+                              <span
+                                class="text-red-500"
+                                @click="targetedTask = { id: task.id, action: 'Delete' }"
+                                title="Delete"
+                                >✗</span
+                              >
+                            </span>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 text-sm text-gray-500"
+      x-text="copyright"
+    ></footer>
+
+    <!-- Notification -->
+    <div
+      class="fixed top-5 left-1/2 -translate-x-1/2 z-[999]"
+      x-show="notification.show"
+      x-transition
+      x-cloak
+    >
+      <div
+        class="px-4 py-3 rounded shadow-lg text-white"
+        :class="{
+            'bg-green-400': notification.type === 'success',
+            'bg-red-400': notification.type === 'danger',
+            'bg-blue-400': notification.type === 'info'
+          }"
+        x-text="notification.message"
+      ></div>
+    </div>
+
+    <!-- Approve action modal -->
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center"
+      x-show="targetedTask.id !== null"
+      x-cloak
+    >
+      <div class="absolute inset-0 bg-black/50"></div>
+
+      <div
+        class="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6"
+      >
+        <div class="flex justify-between items-start">
+          <h2
+            class="text-xl font-semibold"
+            x-text="`${targetedTask.action} Task`"
+          ></h2>
+          <button
+            class="text-gray-500 hover:text-gray-700 cursor-pointer"
+            @click="disapproveAction()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="mt-4">
+          <p
+            x-text="`Do you really want to ${targetedTask.action.toLowerCase()} this task?`"
+          ></p>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+          <button
+            class="text-sm md:text-base bg-gray-400 rounded text-white py-1 px-2 hover:bg-gray-500"
+            @click="disapproveAction()"
+          >
+            No
+          </button>
+
+          <button
+            class="text-sm md:text-base bg-red-400 rounded text-white py-1 px-2 hover:bg-red-500"
+            @click="approveAction()"
+          >
+            Yes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal  -->
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center"
+      x-show="modalOpened"
+    >
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div
+        class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 p-6"
+      >
+        <div class="flex justify-between items-start">
+          <h2 class="text-xl font-semibold" x-text="modalTitle"></h2>
+          <button
+            class="text-gray-500 hover:text-gray-700 cursor-pointer"
+            @click="toggleModal()"
+          >
+            <i class="bi bi-x-lg">X</i>
+          </button>
+        </div>
+        <p class="text-red-500 text-center" x-show="error" x-text="error"></p>
+        <div class="mt-4">
+          <div x-show="showDetail" class="mb-3">
+            <div class="mb-2 flex justify-between">
+              <p class="flex">
+                <span class="font-bold mr-2">Priority:</span>
+                <span x-text="currentTask.priority"></span>
+              </p>
+              <p class="flex">
+                <span class="font-bold mr-2">Due date: </span>
+                <span x-text="currentTask.dueDate"></span>
+              </p>
+              <p class="flex">
+                <span class="font-bold mr-2">Status: </span>
+                <span x-text="currentTask.status"></span>
+              </p>
+            </div>
+            <div class="mb-2">
+              <span class="font-bold">Description</span>
+              <p x-text="currentTask.description" class="font-sm"></p>
+            </div>
+            <div class="flex justify-end gap-3">
+              <button
+                type="button"
+                class="px-3 py-1 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
+                @click="toggleModal()"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="px-3 py-1 bg-black text-white rounded cursor-pointer transition-all duration-150 ease-in-out hover:scale-105 hover:bg-gray-900 active:scale-95"
+                @click="showDetail=false; editTask(currentTask.id)"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+
+          <form @submit.prevent="handleSubmit()" x-show="!showDetail">
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Title</label
+              >
+              <input
+                type="text"
+                class="w-full border rounded px-2 py-2"
+                x-model="currentTask.title"
+                placeholder="Title"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Description</label
+              >
+              <textarea
+                required
+                class="w-full border rounded px-3 py-2"
+                x-model="currentTask.description"
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Priority</label
+              >
+              <select
+                class="w-full border rounded px-2 py-2"
+                required
+                x-model="currentTask.priority"
+              >
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Due date</label
+              >
+              <input
+                type="date"
+                class="w-full border rounded px-2 py-2"
+                x-model="currentTask.dueDate"
+                required
+              />
+            </div>
+            <div class="flex justify-end gap-3">
+              <button
+                type="button"
+                class="px-3 py-1 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
+                @click="toggleModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                x-text="modalButtonText"
+                class="px-3 py-1 bg-black text-white rounded cursor-pointer transition-all duration-150 ease-in-out hover:scale-105 hover:bg-gray-900 active:scale-95"
+              ></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="module" src="/src/main.js"></script>
+</html>
