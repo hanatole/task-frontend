@@ -17,6 +17,7 @@ Alpine.data("taskApp", () => ({
   modalOpened: false,
   modalTitle: "Add Task",
   showDetail: false,
+  showForm: false,
 
   targetedTask: {
     id: null,
@@ -81,10 +82,6 @@ Alpine.data("taskApp", () => ({
       });
   },
 
-  toggleModal() {
-    this.modalOpened = !this.modalOpened;
-  },
-
   resetCurrenTask() {
     this.currentTask = {
       id: null,
@@ -95,6 +92,35 @@ Alpine.data("taskApp", () => ({
       priority: "LOW",
       update: false,
     };
+  },
+
+  openForm() {
+    this.showForm = true;
+    this.modalOpened = true;
+  },
+
+  closeForm() {
+    this.showForm = false;
+    this.modalOpened = false;
+  },
+
+  openDetail() {
+    this.showDetail = true;
+    this.modalOpened = true;
+  },
+
+  closeDetail() {
+    this.showDetail = false;
+    this.modalOpened = false;
+    this.disapproveAction();
+  },
+
+  closeAll() {
+    this.modalOpened = false;
+    this.showDetail = false;
+    this.showForm = false;
+    this.disapproveAction();
+    this.resetCurrenTask();
   },
 
   handleSubmit() {
@@ -164,8 +190,7 @@ Alpine.data("taskApp", () => ({
       .then((data) => {
         if (data.error) throw new Error(data.error);
         this.tasks = [data, ...this.tasks];
-        this.toggleModal();
-        this.resetCurrenTask();
+        this.closeAll();
         this.notify("Task added successfully!", "success");
       })
       .catch((err) => {});
@@ -174,18 +199,26 @@ Alpine.data("taskApp", () => ({
   showTask(id) {
     this.currentTask = this.tasks.find((task) => task.id == id);
     this.currentTask.update = false;
-    this.showDetail = true;
-    this.modalOpened = true;
     this.modalButtonText = "Edit";
     this.modalTitle = this.currentTask.title;
+    this.openDetail();
   },
 
   editTask(id) {
+    this.closeDetail();
     this.currentTask = { ...this.tasks.find((task) => task.id == id) };
     this.currentTask.update = true;
-    this.modalOpened = true;
     this.modalButtonText = "Update";
     this.modalTitle = "Update Task";
+    this.openForm();
+  },
+
+  newTask() {
+    this.closeAll();
+    this.resetCurrenTask();
+    this.modalButtonText = "Add";
+    this.modalTitle = "Add Task";
+    this.openForm();
   },
 
   updateTask(id, payload) {
@@ -198,8 +231,7 @@ Alpine.data("taskApp", () => ({
       .then((data) => {
         if (data.error) throw new Error(data.error);
         this.tasks = this.tasks.map((task) => (task.id == id ? data : task));
-        this.toggleModal();
-        this.resetCurrenTask();
+        this.closeAll();
         this.notify("Task updated successfully!", "info");
       })
       .catch((err) => {});
@@ -213,7 +245,7 @@ Alpine.data("taskApp", () => ({
       .then((data) => {
         if (data.error) throw new Error(data.error);
         this.tasks = this.tasks.map((task) => (task.id == id ? data : task));
-        this.resetCurrenTask();
+        this.closeAll();
         this.notify("Task completed successfully!", "success");
       })
       .catch((err) => {});
@@ -224,7 +256,7 @@ Alpine.data("taskApp", () => ({
       .then((res) => {
         if (!res.ok) throw new Error(res.statusText);
         this.tasks = this.tasks.filter((q) => q.id !== id);
-        this.resetCurrenTask();
+        this.closeAll();
         this.notify("Task deleted successfully!", "danger");
       })
       .catch((err) => {

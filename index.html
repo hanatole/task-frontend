@@ -42,7 +42,7 @@
     class="antialiased"
     x-data="taskApp"
     x-cloak
-    @keydown.escape.window="modalOpened = false; disapproveAction()"
+    @keydown.escape.window="closeAll()"
   >
     <!-- Header -->
     <header class="shadow-sm">
@@ -70,7 +70,7 @@
         <div class="flex ml-0 md:ml-auto gap-2 md:gap-8 items-center">
           <button
             class="px-3 py-1 bg-black text-white rounded cursor-pointer transition-all duration-150 ease-in-out hover:scale-105 hover:bg-gray-900 active:scale-95"
-            @click="toggleModal()"
+            @click="newTask()"
             :class="error !== null ? '-z-10 opacity-50' : ''"
           >
             Add
@@ -270,7 +270,7 @@
             class="text-gray-500 hover:text-gray-700 cursor-pointer"
             @click="disapproveAction()"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="font-semibold">✗</i>
           </button>
         </div>
 
@@ -311,7 +311,7 @@
           <h2 class="text-xl font-semibold" x-text="modalTitle"></h2>
           <button
             class="text-gray-500 hover:text-gray-700 cursor-pointer"
-            @click="toggleModal()"
+            @click="closeAll()"
           >
             <i class="font-semibold">✗</i>
           </button>
@@ -341,21 +341,21 @@
               <button
                 type="button"
                 class="px-3 py-1 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
-                @click="toggleModal()"
+                @click="closeDetail()"
               >
                 Close
               </button>
               <button
                 type="button"
                 class="px-3 py-1 bg-black text-white rounded cursor-pointer transition-all duration-150 ease-in-out hover:scale-105 hover:bg-gray-900 active:scale-95"
-                @click="showDetail=false; editTask(currentTask.id)"
+                @click="editTask(currentTask.id)"
               >
                 Edit
               </button>
             </div>
           </div>
 
-          <form @submit.prevent="handleSubmit()" x-show="!showDetail">
+          <form @submit.prevent="handleSubmit()" x-show="showForm">
             <div class="mb-3">
               <label class="block text-sm font-medium text-gray-700 mb-1"
                 >Title</label
@@ -408,7 +408,7 @@
               <button
                 type="button"
                 class="px-3 py-1 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
-                @click="toggleModal()"
+                @click="closeForm()"
               >
                 Cancel
               </button>
