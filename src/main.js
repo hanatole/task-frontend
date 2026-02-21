@@ -168,7 +168,7 @@ Alpine.data("taskApp", () => ({
   },
 
   editTask(id) {
-    this.currentTask = this.tasks.find((task) => task.id == id);
+    this.currentTask = { ...this.tasks.find((task) => task.id == id) };
     this.currentTask.update = true;
     this.modalOpened = true;
     this.modalButtonText = "Update";
