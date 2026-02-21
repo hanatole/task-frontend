@@ -30,6 +30,33 @@ Alpine.data("taskApp", () => ({
     type: "info",
   },
 
+  pagination: {
+    page: 1,
+    size: 10,
+    pages: 1,
+    activeButton: "next",
+  },
+
+  prevPage() {
+    if (this.pagination.page > 1) this.pagination.page--;
+    this.pagination.activeButton = "prev";
+    this.getTasks();
+  },
+
+  nextPage() {
+    if (this.pagination.page < this.pagination.pages) this.pagination.page++;
+    this.pagination.activeButton = "next";
+    this.getTasks();
+  },
+
+  computeStyle(button, disabled) {
+    if (disabled)
+      return "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50";
+    return this.pagination.activeButton == button
+      ? "bg-black text-white"
+      : "bg-white border-black text-black hover:bg-black hover:text-white";
+  },
+
   init() {
     this.getTasks();
   },
@@ -84,11 +111,16 @@ Alpine.data("taskApp", () => ({
   },
 
   getTasks() {
-    fetch(`/api/tasks`)
+    const params = new URLSearchParams();
+    params.append("page", this.pagination.page);
+    params.append("size", this.pagination.size);
+    const queryString = params.toString();
+    fetch(`/api/tasks?${queryString}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.error) throw new Error(data.error);
-        this.tasks = data;
+        this.tasks = data.items;
+        this.pagination.pages = data.pages;
       })
       .catch((err) => {
         this.error = err.message;

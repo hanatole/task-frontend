@@ -154,6 +154,24 @@
                       </template>
                     </tbody>
                   </table>
+                  <div
+                    class="mt-4 flex justify-end gap-2 text-sm text-gray-500"
+                  >
+                    <button
+                      class="px-4 py-1.5 rounded border cursor-pointer"
+                      :class="computeStyle('prev', pagination.page <= 1)"
+                      @click="prevPage()"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      class="px-4 py-1.5 rounded border cursor-pointer"
+                      :class="computeStyle('next', pagination.page >= pagination.pages)"
+                      @click="nextPage()"
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
