@@ -71,6 +71,7 @@
           <button
             class="px-3 py-1 bg-black text-white rounded cursor-pointer transition-all duration-150 ease-in-out hover:scale-105 hover:bg-gray-900 active:scale-95"
             @click="toggleModal()"
+            :class="error !== null ? '-z-10 opacity-50' : ''"
           >
             Add
           </button>

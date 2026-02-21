@@ -66,6 +66,19 @@ Alpine.data("taskApp", () => ({
 
   init() {
     this.getTasks();
+    fetch("/api/healthcheck")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status !== "healthy")
+          throw new Error("Failed to connect to API. Please try again later.");
+      })
+      .catch((err) => {
+        this.notify(
+          "Failed to connect to API. Please try again later.",
+          "danger",
+          360000,
+        );
+      });
   },
 
   toggleModal() {
