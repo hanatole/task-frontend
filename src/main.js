@@ -8,6 +8,7 @@ Alpine.data("taskApp", () => ({
     title: "",
     description: "",
     dueDate: new Date().toISOString().split("T")[0],
+    minDueDate: new Date().toISOString().split("T")[0],
     priority: "LOW",
     update: false,
   },
@@ -28,6 +29,12 @@ Alpine.data("taskApp", () => ({
     show: false,
     message: "",
     type: "info",
+  },
+
+  filters: {
+    priority: "ALL",
+    status: "ALL",
+    dueDate: "ALL",
   },
 
   pagination: {
@@ -53,8 +60,8 @@ Alpine.data("taskApp", () => ({
     if (disabled)
       return "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50";
     return this.pagination.activeButton == button
-      ? "bg-black text-white"
-      : "bg-white border-black text-black hover:bg-black hover:text-white";
+      ? "bg-black text-white cursor-pointer"
+      : "bg-white border-black text-black hover:bg-black hover:text-white cursor-pointer";
   },
 
   init() {
@@ -71,6 +78,7 @@ Alpine.data("taskApp", () => ({
       title: "",
       description: "",
       dueDate: new Date().toISOString().split("T")[0],
+      minDueDate: new Date().toISOString().split("T")[0],
       priority: "LOW",
       update: false,
     };
@@ -114,6 +122,12 @@ Alpine.data("taskApp", () => ({
     const params = new URLSearchParams();
     params.append("page", this.pagination.page);
     params.append("size", this.pagination.size);
+    if (this.filters.priority !== "ALL")
+      params.append("priority", this.filters.priority);
+    if (this.filters.status !== "ALL")
+      params.append("status", this.filters.status);
+    if (this.filters.dueDate !== "ALL")
+      params.append("due_date", this.filters.dueDate);
     const queryString = params.toString();
     fetch(`/api/tasks?${queryString}`)
       .then((res) => res.json())

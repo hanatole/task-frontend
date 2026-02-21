@@ -68,7 +68,40 @@
     <main class="mx-auto max-w-5xl px-6 py-1">
       <section>
         <div class="px-2 py-5 mx-auto max-w-7xl">
-          <h1 class="text-2xl font-semibold text-center my-1">List of tasks</h1>
+          <div class="flex justify-between my-2">
+            <h1 class="text-2xl font-semibold text-center">List of tasks</h1>
+            <div class="ml-auto flex items-center">
+              <select
+                class="border rounded px-2 py-1 ml-4"
+                x-model="filters.dueDate"
+                @change="pagination.page=1; getTasks()"
+              >
+                <option value="ALL">All dates</option>
+                <option value="PAST">Past</option>
+                <option value="TODAY">Today</option>
+                <option value="FUTURE">Future</option>
+              </select>
+              <select
+                class="border rounded px-2 py-1 ml-4"
+                x-model="filters.priority"
+                @change="pagination.page=1; getTasks()"
+              >
+                <option value="ALL">All priorities</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+              </select>
+              <select
+                class="border rounded px-2 py-1 ml-2"
+                x-model="filters.status"
+                @change="pagination.page=1; getTasks()"
+              >
+                <option value="ALL">All statuses</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="OPEN">Open</option>
+              </select>
+            </div>
+          </div>
           <div class="flex flex-col">
             <div class="overflow-x-auto">
               <div class="inline-block min-w-full">
@@ -158,14 +191,14 @@
                     class="mt-4 flex justify-end gap-2 text-sm text-gray-500"
                   >
                     <button
-                      class="px-4 py-1.5 rounded border cursor-pointer"
+                      class="px-4 py-1.5 rounded border"
                       :class="computeStyle('prev', pagination.page <= 1)"
                       @click="prevPage()"
                     >
                       Previous
                     </button>
                     <button
-                      class="px-4 py-1.5 rounded border cursor-pointer"
+                      class="px-4 py-1.5 rounded border"
                       :class="computeStyle('next', pagination.page >= pagination.pages)"
                       @click="nextPage()"
                     >
@@ -352,6 +385,7 @@
                 type="date"
                 class="w-full border rounded px-2 py-2"
                 x-model="currentTask.dueDate"
+                :min="currentTask.minDueDate"
                 required
               />
             </div>
